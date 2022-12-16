@@ -12,7 +12,7 @@ const SelecMenu = props => {
     return (
         <View style={global.page}>
             <TopBarReturn navigation={props.navigation}/>
-            <View  style={[global.container, {marginTop: '10%', marginBottom: '30%'} ]}>
+            <View  style={global.container}>
                 <View style={selecMenu.titleBox}>
                     <Text style={[global.text, {textAlign: 'center'}]}>Choisissez votre parcours</Text>
                 </View>
