@@ -1,34 +1,29 @@
 import React from "react";
-import { Text, View, ImageBackground, Pressable, StyleSheet } from "react-native";
+import { Text, View, ImageBackground, StyleSheet } from "react-native";
 import global from '../Styles'
 import TopBarReturn from '../components/TopBarReturn'
 import Marker from '../components/Marker'
+import jsonData from '../SampleData.json';
+import Maps from '../components/MapsLoad.js';
 
 const Map = props => {
-    const goToMap = (selection) => {
-        alert('selection: ' + selection);
-        //props.navigation.navigate("Map")
-    };
+    const { selecInd } = props.route.params;
+    let markers = [];
+
+    for (let i = 0; i < jsonData.maps[selecInd].markers.length; i++) {
+        markers.push(<Marker key={i} onPress={this._onPress} top={jsonData.maps[selecInd].markers[i].top} left={jsonData.maps[selecInd].markers[i].left} value={jsonData.maps[selecInd].markers[i].value} />)
+    }
 
     return (
         <View style={global.page}>
             <TopBarReturn navigation={props.navigation} />
             <View style={mapStyles.mainContainer}>
                 <View style={mapStyles.titleBox}>
-                    <Text style={[global.text, { textAlign: 'center' }]}>PARCOURS 1</Text>
+                    <Text style={[global.text, { textAlign: 'center' }]}>PARCOURS { selecInd + 1 }</Text>
                 </View>
                 <View style={mapStyles.mapContainer}>
-                    <ImageBackground style={{ flex: 1, width: '100%' }} source={require('../../assets/Parcours1.png')} resizeMode={'contain'}>
-                        <Marker onPress={this._onPress} top={'35%'} left={'59%'} value={'1'} />
-                        <Marker onPress={this._onPress} top={'45%'} left={'64%'} value={'2'} />
-                        <Marker onPress={this._onPress} top={'48%'} left={'79%'} value={'3'} />
-                        <Marker onPress={this._onPress} top={'16%'} left={'87%'} value={'4'} />
-                        <Marker onPress={this._onPress} top={'16%'} left={'59%'} value={'5'} />
-                        <Marker onPress={this._onPress} top={'11%'} left={'50%'} value={'6'} />
-                        <Marker onPress={this._onPress} top={'33%'} left={'50%'} value={'7'} />
-                        <Marker onPress={this._onPress} top={'43%'} left={'14.5%'} value={'8'} />
-                        <Marker onPress={this._onPress} top={'63%'} left={'25.5%'} value={'9'} />
-                        <Marker onPress={this._onPress} top={'70%'} left={'-1%'} value={'10'} />
+                    <ImageBackground style={{ flex: 1, width: '100%' }} source={Maps[jsonData.maps[0].name]} resizeMode={'contain'}>
+                        {markers}
                     </ImageBackground>
                 </View>
             </View>

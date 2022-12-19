@@ -5,8 +5,8 @@ import TopBarReturn from '../components/TopBarReturn'
 
 const SelecMenu = props => {
     const goToMap = (selection) => {
-        alert('selection: ' + selection);
-        props.navigation.navigate("Map")
+        //alert('selection: ' + selection);
+        props.navigation.navigate("Map", { selecInd: selection })
     };
 
     return (
@@ -16,13 +16,13 @@ const SelecMenu = props => {
                 <View style={selecMenu.titleBox}>
                     <Text style={[global.text, {textAlign: 'center'}]}>Choisissez votre parcours</Text>
                 </View>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(1)}}>
+                <Pressable style={selecMenu.button} onPress={() => {goToMap(0)}}>
                     <Text style={global.text} >PARCOURS 1: €</Text>
                     </Pressable>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(2)}}>
+                <Pressable style={selecMenu.button} onPress={() => {goToMap(1)}}>
                     <Text style={global.text} >PARCOURS 2: €€</Text>
                 </Pressable>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(3)}}>
+                <Pressable style={selecMenu.button} onPress={() => {goToMap(2)}}>
                     <Text style={global.text} >PARCOURS 3: €€€</Text>
                 </Pressable>
             </View>
