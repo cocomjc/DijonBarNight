@@ -1,17 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Text, View, ImageBackground, StyleSheet } from "react-native";
 import global from '../Styles'
 import TopBarReturn from '../components/TopBarReturn'
 import Marker from '../components/Marker'
 import jsonData from '../SampleData.json';
-import Maps from '../components/MapsLoad.js';
+import MapImages from '../components/MapsLoad.js';
+import { app, db, getFirestore, collection, addDoc, getDocs } from '../firebase/index.js';
 
 const Map = props => {
-    const { selecInd } = props.route.params;
+    const { mapId } = props.route.params;
+    const [mapParam, setMapParam] = useState([]);
     let markers = [];
 
-    for (let i = 0; i < jsonData.maps[selecInd].markers.length; i++) {
-        markers.push(<Marker key={i} onPress={this._onPress} top={jsonData.maps[selecInd].markers[i].top} left={jsonData.maps[selecInd].markers[i].left} value={jsonData.maps[selecInd].markers[i].value} />)
+    const getMapParam = async () => {
+        try {
+            const snapshot = await getDocs(collection(db, "parcours"));
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            else {
+                snapshot.forEach((doc) => {
+                    if (doc.id == mapId) {
+                        console.log(doc.id, '=>', doc.data());
+                        setMapParam(doc.data());
+                    }
+                });
+            }
+        }
+        catch (error) {
+            console.log("ya erreur chef" + error);
+        }
+    }
+
+    useEffect(() => {
+        getMapParam();
+    }, []);
+
+    if (Object.entries(mapParam).length != 0) {
+        for (const [key, value] of Object.entries(mapParam.markers)) {
+            console.log(`${key}: ${value}`);
+            markers.push(<Marker key={key} onPress={this._onPress} top={value[0]} left={value[1]} value={key} />)
+        }
     }
 
     return (
@@ -19,10 +49,10 @@ const Map = props => {
             <TopBarReturn navigation={props.navigation} />
             <View style={mapStyles.mainContainer}>
                 <View style={mapStyles.titleBox}>
-                    <Text style={[global.text, { textAlign: 'center' }]}>PARCOURS { selecInd + 1 }</Text>
+                    <Text style={[global.text, { textAlign: 'center' }]}>{ mapParam.name }</Text>
                 </View>
                 <View style={mapStyles.mapContainer}>
-                    <ImageBackground style={{ flex: 1, width: '100%' }} source={Maps[jsonData.maps[0].name]} resizeMode={'contain'}>
+                    <ImageBackground style={{ flex: 1, width: '100%' }} source={MapImages[mapParam.name]} resizeMode={'contain'}>
                         {markers}
                     </ImageBackground>
                 </View>

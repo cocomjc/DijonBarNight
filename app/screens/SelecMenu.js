@@ -1,30 +1,54 @@
-import React from "react";
-import { Text, View, Image, Pressable, StyleSheet } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { Text, View, FlatList, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import global from '../Styles'
 import TopBarReturn from '../components/TopBarReturn'
+import { app, db, getFirestore, collection, addDoc, getDocs } from '../firebase/index.js';
+import ParcourItem from "../components/ParcourItem";
 
 const SelecMenu = props => {
-    const goToMap = (selection) => {
-        //alert('selection: ' + selection);
-        props.navigation.navigate("Map", { selecInd: selection })
-    };
+    const [parcoursList, setParcoursList] = useState([]);
+    
+    const getMaps = async () => {
+        try {
+            const snapshot = await getDocs(collection(db, "parcours"));
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+            }
+            else {
+                setParcoursList(
+                    snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+                );
+                snapshot.forEach((doc) => {
+                    console.log(doc.id, '=>', doc.data());
+                });
+            }
+        }
+        catch (error) {
+            console.log("ya erreur chef" + error);
+        }
+    }
 
+    useEffect(() => {
+        getMaps();
+    }, []);
+    
     return (
         <View style={global.page}>
             <TopBarReturn navigation={props.navigation}/>
-            <View  style={global.container}>
+            <View style={global.container}>
                 <View style={selecMenu.titleBox}>
                     <Text style={[global.text, {textAlign: 'center'}]}>Choisissez votre parcours</Text>
                 </View>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(0)}}>
-                    <Text style={global.text} >PARCOURS 1: €</Text>
-                    </Pressable>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(1)}}>
-                    <Text style={global.text} >PARCOURS 2: €€</Text>
-                </Pressable>
-                <Pressable style={selecMenu.button} onPress={() => {goToMap(2)}}>
-                    <Text style={global.text} >PARCOURS 3: €€€</Text>
-                </Pressable>
+                {parcoursList.length > 0 ? (
+                    <FlatList
+                        data={parcoursList}
+                        renderItem={({ item }) => <ParcourItem name={item.name} price={item.price} id={item.id} navigation={props.navigation} />}
+                        keyExtractor={item => item.id}
+                    />
+                ) : (
+                    <ActivityIndicator />
+                )}
             </View>
         </View>
     );
@@ -37,14 +61,6 @@ const selecMenu = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#ff4b71',
     },
-    button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 80,
-        borderRadius: 10,
-        borderWidth: 4,
-        borderColor: '#ff4b71',
-    }
 });
 
 

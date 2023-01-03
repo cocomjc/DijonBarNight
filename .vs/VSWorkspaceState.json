@@ -3,9 +3,10 @@
     "",
     "\\app",
     "\\app\\components",
+    "\\app\\firebase",
     "\\app\\screens",
     "\\assets"
   ],
-  "SelectedNode": "\\app\\screens\\SelecMenu.js",
+  "SelectedNode": "\\app\\SampleData.json",
   "PreviewInSolutionExplorer": false
 }
